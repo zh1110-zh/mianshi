@@ -82,13 +82,22 @@
 | 电脑关机别人就无法访问 | 新增Supabase云同步层，填写URL+Key后数据自动存云，部署Vercel后任意设备可访问 | 2026-06-24 |
 | 改版后文件损坏丢失改动 | 建立版本备份机制：每次大改动存 `backups/index_YYYY-MM-DD_vN.html` + 更新变更记录 | 2026-06-24 |
 | 整体UI老旧、卡片拥挤、评价页不美观 | 全面CSS重设计：紫色渐变Header、卡片阴影+圆角+左色条+hover上浮、毛玻璃弹窗、表单focus光圈、评分星级阴影 | 2026-06-24 |
+| 评价页点不出来，候选人信息不自动填入 | subpanel-history div丢失导致JS报错，表单填充被跳过；补回div+简化startEvalForPerson直达评价页 | 2026-06-25 |
+| 部分PDF简历电话提取失败 | 电话识别升级为三策略提取（标准格式→11位数字串→去空白全局搜），覆盖PDF换行拆散等边缘情况 | 2026-06-25 |
+| 特殊情况原因要点进去才能看到 | 卡片上直接显示⚠️橙色原因文字，不点进去就一目了然 | 2026-06-25 |
+| 代码只在本机，换电脑无法修改 | GitHub仓库 `zh1110-zh/mianshi` + Netlify自动部署，每次改完代码自动推GitHub | 2026-06-25 |
+| 文档不同步，换电脑看不到 | 变更记录和SOP同步上传GitHub，任何电脑可查看 | 2026-06-25 |
 
-## 云部署（2026-06-24）
+## 部署架构（2026-06-25）
 
-Supabase + Vercel 方案已集成到代码中，当前默认关闭（不填配置项时完全不影响本地使用）。
+| 层 | 地址 | 说明 |
+|------|------|------|
+| 云端入口 | `https://hilarious-souffle-3038d3.netlify.app` | 任何人任何网络打开即用 |
+| 代码仓库 | `https://github.com/zh1110-zh/mianshi` | 代码+文档，改完自动推送 |
+| 数据库 | Supabase `gbgggowlidtjkfymeucp` | 评价数据云存储，本地云端共享 |
+| 本地开发 | `D:\绵羊札记\面试评价平台\index.html` | 本地改代码入口 |
 
-启用步骤：
-1. 注册 Supabase（supabase.com）→ 创建项目 → 建表 `app_data`（字段：id, data(jsonb), updated_at）
+**更新流程**：本地改代码 → 自动推 GitHub → Netlify 检测到 GitHub 更新 → 自动部署云端。
 2. 将 Supabase URL 和 anon key 填入代码顶部 `SUPABASE_URL` 和 `SUPABASE_KEY`
 3. 部署到 Vercel：导入 GitHub 仓库 → 自动部署
 
